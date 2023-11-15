@@ -38,7 +38,9 @@ class RDTSender:
         :return: the ASCII code of the character, for example ASCII('A') = 65
         """
         # TODO provide your own implementation
-        checksum = None  # you need to change that
+
+        checksum = ord(data)
+
         return checksum
 
     @staticmethod
@@ -61,6 +63,9 @@ class RDTSender:
         :return: True -> if the reply is corrupted | False ->  if the reply is NOT corrupted
         """
         # TODO provide your own implementation
+
+        return reply["ack"] != reply["checksum"]
+
         pass
 
     @staticmethod
@@ -71,6 +76,9 @@ class RDTSender:
         :return: True -> if ack in the reply match the   expected sequence number otherwise False
         """
         # TODO provide your own implementation
+
+        return reply["ack"] == exp_seq
+
         pass
 
     @staticmethod
