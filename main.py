@@ -16,9 +16,9 @@ if __name__ == "__main__":
     #     corrupt_pkt = bool(int(args["pkt"]))
     #     corrupt_ack = bool(int(args["ack"]))
 
-    msg = "Hello World"
-    prob_to_deliver = 0.9
-    delay = 1
+    msg = "Hi my name is mohamed"
+    prob_to_deliver = 0.1
+    delay = 0
     corrupt_pkt = True
     corrupt_ack = True
 

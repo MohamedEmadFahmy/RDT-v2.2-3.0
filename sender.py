@@ -39,9 +39,7 @@ class RDTSender:
         """
         # TODO provide your own implementation
 
-        checksum = ord(data)
-
-        return checksum
+        return ord(data)
 
     @staticmethod
     def clone_packet(packet):
@@ -64,7 +62,7 @@ class RDTSender:
         """
         # TODO provide your own implementation
 
-        return reply["ack"] != reply["checksum"]
+        return ord(reply["ack"]) != reply["checksum"]
 
         pass
 
@@ -100,9 +98,35 @@ class RDTSender:
 
         # for every character in the buffer
         for data in process_buffer:
+            
             checksum = RDTSender.get_checksum(data)
+
             pkt = RDTSender.make_pkt(self.sequence, data, checksum)
-            reply = self.net_srv.udt_send(pkt)
+
+            packet_to_send = self.clone_packet(pkt)
+
+            # print("Sent packet: {} {} {}".format(packet_to_send['sequence_number'], packet_to_send['data'], packet_to_send['checksum']))
+
+
+            reply = self.net_srv.udt_send(packet_to_send)
+
+            while self.is_corrupted(reply) or not self.is_expected_seq(reply, self.sequence):
+                packet_to_send = self.clone_packet(pkt)
+                reply = self.net_srv.udt_send(packet_to_send)
+
+            print("Sent packet: {} {} {}".format(packet_to_send['sequence_number'], packet_to_send['data'], packet_to_send['checksum']))
+
+            
+
+
+
+            if(self.sequence == "0"):
+                self.sequence = "1"
+            else:
+                self.sequence = "0"
+
+
+            
 
         print("Sender Done!")
         return

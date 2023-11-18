@@ -48,7 +48,7 @@ class RDTReceiver:
         """
         # TODO provide your own implementation
 
-        print(rcv_pkt)
+        # print(rcv_pkt)
         return rcv_pkt["sequence_number"] == exp_seq
 
         pass
@@ -71,20 +71,26 @@ class RDTReceiver:
 
         # TODO provide your own implementation
 
-        # deliver the data to the process in the application layer
-        ReceiverProcess.deliver_data(rcv_pkt["data"])
-
         seq_to_send = self.sequence
 
-        if self.is_corrupted(rcv_pkt) or not self.is_expected_seq(
-            rcv_pkt, self.sequence
-        ):
+        if self.is_corrupted(rcv_pkt) or not self.is_expected_seq(rcv_pkt, self.sequence):
             if seq_to_send == "0":
                 seq_to_send = "1"
             else:
                 seq_to_send = "0"
+            
+            reply_pkt = RDTReceiver.make_reply_pkt(seq_to_send, ord(seq_to_send))
 
-        reply_pkt = RDTReceiver.make_reply_pkt(seq_to_send, seq_to_send)
+        else:
+
+            reply_pkt = RDTReceiver.make_reply_pkt(seq_to_send, ord(seq_to_send))
+            if self.sequence == "0":
+                self.sequence = "1"
+            else:
+                self.sequence = "0"
+
+            # deliver the data to the process in the application layer ONLY if the data is not corrupt
+            ReceiverProcess.deliver_data(rcv_pkt["data"])
+            
+
         return reply_pkt
-
-        return None
