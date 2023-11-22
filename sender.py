@@ -1,3 +1,5 @@
+import colorama
+from colorama import Fore
 class SenderProcess:
     """Represent the sender process in the application layer"""
 
@@ -96,6 +98,13 @@ class RDTSender:
         :return: terminate without returning any value
         """
 
+        colorama.init(autoreset = True)
+        print(Fore.GREEN + "Welcome")
+        print(Fore.GREEN + "-------")
+        print(Fore.MAGENTA + "Sender is trying to send: " + Fore.WHITE + str(process_buffer))
+        print()
+        # print(Fore.RED + "red text")
+        
         # for every character in the buffer
         for data in process_buffer:
             
@@ -105,16 +114,32 @@ class RDTSender:
 
             packet_to_send = self.clone_packet(pkt)
 
-            # print("Sent packet: {} {} {}".format(packet_to_send['sequence_number'], packet_to_send['data'], packet_to_send['checksum']))
+            # print("Sending packet: {} {} {}".format(packet_to_send['sequence_number'], packet_to_send['data'], packet_to_send['checksum']))
+            print(Fore.BLUE + "Sending packet: " + Fore.WHITE + str(pkt))
+            print()
 
 
             reply = self.net_srv.udt_send(packet_to_send)
+            
+            attempts = 0
 
             while self.is_corrupted(reply) or not self.is_expected_seq(reply, self.sequence):
+                # print("Attempt " + str(attempts) + ": ")
+                attempts += 1
+
+                # if self.is_corrupted(reply):
+                #     print("Corrupted packet, Expected: {} , Received: {}".format(pkt['data'],chr(int(reply["checksum"]))))
+
+                # if not self.is_expected_seq(reply, self.sequence):
+                #     print("Corrupted sequence number , Expected: {} , Received: {}".format(self.sequence, reply["ack"]))
+
                 packet_to_send = self.clone_packet(pkt)
                 reply = self.net_srv.udt_send(packet_to_send)
 
-            print("Sent packet: {} {} {}".format(packet_to_send['sequence_number'], packet_to_send['data'], packet_to_send['checksum']))
+                
+
+            # print("After :       ")
+            # print("Sent packet: {} {} {}".format(packet_to_send['sequence_number'], packet_to_send['data'], packet_to_send['checksum']))
 
             
 

@@ -1,3 +1,5 @@
+import colorama
+from colorama import Fore
 class ReceiverProcess:
     """Represent the receiver process in the application layer"""
 
@@ -37,8 +39,6 @@ class RDTReceiver:
         new_checksum = ord(packet["data"])
         return new_checksum != int(packet["checksum"])
 
-        pass
-
     @staticmethod
     def is_expected_seq(rcv_pkt, exp_seq):
         """Check if the received reply from receiver has the expected sequence number
@@ -50,8 +50,6 @@ class RDTReceiver:
 
         # print(rcv_pkt)
         return rcv_pkt["sequence_number"] == exp_seq
-
-        pass
 
     @staticmethod
     def make_reply_pkt(seq, checksum):
@@ -73,6 +71,9 @@ class RDTReceiver:
 
         seq_to_send = self.sequence
 
+        print(Fore.RED + "Reciever: Expected sequence number: {}".format(self.sequence))
+        print()
+
         if self.is_corrupted(rcv_pkt) or not self.is_expected_seq(rcv_pkt, self.sequence):
             if seq_to_send == "0":
                 seq_to_send = "1"
@@ -91,6 +92,6 @@ class RDTReceiver:
 
             # deliver the data to the process in the application layer ONLY if the data is not corrupt
             ReceiverProcess.deliver_data(rcv_pkt["data"])
-            
+
 
         return reply_pkt
