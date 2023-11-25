@@ -1,4 +1,3 @@
-import colorama
 from colorama import Fore
 class ReceiverProcess:
     """Represent the receiver process in the application layer"""

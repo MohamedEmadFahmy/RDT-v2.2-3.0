@@ -1,5 +1,5 @@
 import colorama
-from colorama import Fore, Back
+from colorama import Fore
 class SenderProcess:
     """Represent the sender process in the application layer"""
 
