@@ -71,10 +71,13 @@ class RDTReceiver:
 
         seq_to_send = self.sequence
 
-        print(Fore.RED + "Reciever: Expected sequence number: {}".format(self.sequence))
-        print()
+        # print(Fore.RED + "Reciever: Expected sequence number: {}".format(self.sequence))
+        # print()
 
         if self.is_corrupted(rcv_pkt) or not self.is_expected_seq(rcv_pkt, self.sequence):
+            print(Fore.RED + "network_layer: \033[4mcorruption occured\033[0m" + str(rcv_pkt))
+            print(Fore.GREEN + "Receiver \033[4mExpecting Sequence number:\033[0m" + Fore.WHITE + str(self.sequence))
+
             if seq_to_send == "0":
                 seq_to_send = "1"
             else:
@@ -82,9 +85,13 @@ class RDTReceiver:
             
             reply_pkt = RDTReceiver.make_reply_pkt(seq_to_send, ord(seq_to_send))
 
+            print(Fore.GREEN + "Receiver \033[4mReply packet:\033[0m" + Fore.WHITE + str(reply_pkt))
+
         else:
 
             reply_pkt = RDTReceiver.make_reply_pkt(seq_to_send, ord(seq_to_send))
+            print(Fore.GREEN + "Receiver \033[4mExpecting Sequence number:\033[0m" + Fore.WHITE + str(self.sequence))
+            print(Fore.GREEN + "Receiver \033[4mReply packet:\033[0m" + Fore.WHITE + str(reply_pkt))
             if self.sequence == "0":
                 self.sequence = "1"
             else:
