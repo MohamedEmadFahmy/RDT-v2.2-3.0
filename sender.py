@@ -123,6 +123,9 @@ class RDTSender:
 
             reply = self.net_srv.udt_send(packet_to_send)
 
+            if reply is None:
+                return
+
 
             while self.is_corrupted(reply) or not self.is_expected_seq(reply, self.sequence):
                 print(Fore.RED + "network_layer: \033[4mcorruption occured\033[0m" + str(reply))
@@ -131,6 +134,9 @@ class RDTSender:
                 print(Fore.BLUE + "Sender \033[4mSending sequence number:\033[0m" + Fore.WHITE + str(self.sequence))
                 print(Fore.BLUE + "Sender \033[4mSending packet:\033[0m" + Fore.WHITE + str(pkt))
                 reply = self.net_srv.udt_send(packet_to_send)
+                
+                if reply is None:
+                    return
 
                 
             print(Fore.BLUE + "Sender \033[4mreceived:\033[0m" + Fore.WHITE + str(reply))

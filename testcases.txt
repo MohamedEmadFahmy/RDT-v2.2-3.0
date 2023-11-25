@@ -1,1 +1,6 @@
 python -u "d:\Semester 5\Networks\Project\Code\main.py" msg="Hello, World!" rel=0.9 delay=1 debug=1 pkt=1 ack=1
+
+
+rdt 3.0:
+
+python -u "d:\Semester 5\Networks\Project\Code\main.py" msg="Hello, World!" rel=0.9 delay=1 debug=1 pkt=1 ack=1 loss = 1

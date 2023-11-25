@@ -10,7 +10,7 @@ NOTE: YOU SHOULD NOT MODIFY THIS CLASS
 class NetworkLayer:
     """ The network layer that deliver packets and acknowledgments between sender and receiver """
 
-    def __init__(self, reliability=1.0, delay=1.0, pkt_corrupt=True, ack_corrupt=True):
+    def __init__(self, reliability=1.0, delay=1.0, pkt_corrupt=True, ack_corrupt=True, pkt_loss = True):
         """ initialize the network layer
         :param reliability: the probability that the network layer will deliver the message correctly
         :param delay: the round trip time for sending a packet and receive a reply
@@ -23,6 +23,7 @@ class NetworkLayer:
         self.delay = delay
         self.pkt_corrupt = pkt_corrupt
         self.ack_corrupt = ack_corrupt
+        self.pkt_loss = pkt_loss
         self.recv = RDTReceiver()  # connect the network layer to the receiver
 
     def get_network_reliability(self):
@@ -79,11 +80,39 @@ class NetworkLayer:
 
         time.sleep(self.delay)
 
-        # bridge|connect the RDT sender and receiver
-        self.reply = self.recv.rdt_rcv(self.packet)
 
         r_test = self.__packet_corruption_probability()
+
+
+        y_test = self.__packet_corruption_probability()
+
+        z_test = self.__packet_corruption_probability()
+
+        # bridge|connect the RDT sender and receiver
+        # dont send the packet if pkt_loss is on and based on the reliability 
+
+
+
+        # if not (y_test and self.pkt_loss):
+        #     self.reply = self.recv.rdt_rcv(self.packet)
+        #     if r_test and self.ack_corrupt:
+        #         self.__corrupt_reply()
+        # else:
+        #     self.reply = None
+
+
+
+        if y_test and self.pkt_loss:
+            self.reply = self.recv.rdt_rcv(None)
+
+        self.reply = self.recv.rdt_rcv(self.packet)
+        
         if r_test and self.ack_corrupt:
             self.__corrupt_reply()
+
+        if z_test and self.pkt_loss:
+            self.reply = None
+
+
 
         return self.reply

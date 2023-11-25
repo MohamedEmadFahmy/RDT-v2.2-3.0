@@ -5,23 +5,26 @@ from colorama import Fore
 import sys
 
 if __name__ == "__main__":
-    args = dict([arg.split('=', maxsplit = 1) for arg in sys.argv[1:]])
-    print(args)
-    msg = args['msg']
-    prob_to_deliver = float(args['rel'])
-    delay = int(args['delay'])
-    debug = bool(int(args['debug']))
-    corrupt_pkt = True
-    corrupt_ack = True
-    if debug:
-        corrupt_pkt = bool(int(args["pkt"]))
-        corrupt_ack = bool(int(args["ack"]))
-
-    # msg = "mohamed"
-    # prob_to_deliver = 1
-    # delay = 0
+    # args = dict([arg.split('=', maxsplit = 1) for arg in sys.argv[1:]])
+    # print(args)
+    # msg = args['msg']
+    # prob_to_deliver = float(args['rel'])
+    # delay = int(args['delay'])
+    # debug = bool(int(args['debug']))
     # corrupt_pkt = True
     # corrupt_ack = True
+    # pkt_loss = True
+    # if debug:
+    #     corrupt_pkt = bool(int(args["pkt"]))
+    #     corrupt_ack = bool(int(args["ack"]))
+    #     corrupt_ack = bool(int(args["loss"]))
+
+    msg = "mohamed"
+    prob_to_deliver = 0.9
+    delay = 0
+    corrupt_pkt = True
+    corrupt_ack = True
+    pkt_loss = True
 
     SenderProcess.set_outgoing_data(msg)
 
@@ -32,6 +35,7 @@ if __name__ == "__main__":
         delay=delay,
         pkt_corrupt=corrupt_pkt,
         ack_corrupt=corrupt_ack,
+        pkt_loss = pkt_loss
     )
 
     rdt_sender = RDTSender(network_serv)

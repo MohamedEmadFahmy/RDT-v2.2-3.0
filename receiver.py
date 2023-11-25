@@ -66,6 +66,9 @@ class RDTReceiver:
         :return: the reply packet
         """
 
+        if rcv_pkt is None:
+            return None
+
         # TODO provide your own implementation
 
         seq_to_send = self.sequence
