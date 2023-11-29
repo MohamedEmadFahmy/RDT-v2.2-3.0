@@ -2,7 +2,7 @@ from network import NetworkLayer
 from receiver import ReceiverProcess
 from sender import SenderProcess, RDTSender
 from colorama import Fore
-import sys
+# import sys
 
 if __name__ == "__main__":
     # args = dict([arg.split('=', maxsplit = 1) for arg in sys.argv[1:]])
@@ -19,11 +19,11 @@ if __name__ == "__main__":
     #     corrupt_ack = bool(int(args["ack"]))
     #     corrupt_ack = bool(int(args["loss"]))
 
-    msg = "mohamed"
-    prob_to_deliver = 0.9
-    delay = 0
-    corrupt_pkt = True
-    corrupt_ack = True
+    msg = "mos"
+    prob_to_deliver = 0.5
+    delay = 0.1
+    corrupt_pkt = False
+    corrupt_ack = False
     pkt_loss = True
 
     SenderProcess.set_outgoing_data(msg)

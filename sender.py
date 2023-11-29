@@ -1,5 +1,7 @@
 import colorama
 from colorama import Fore
+from stopwatch import Stopwatch
+import math
 class SenderProcess:
     """Represent the sender process in the application layer"""
 
@@ -32,6 +34,8 @@ class RDTSender:
         """
         self.sequence = "0"
         self.net_srv = net_srv
+        self.timeout_duration = 1
+        self.stopwatch = Stopwatch(2)
 
     @staticmethod
     def get_checksum(data):
@@ -107,7 +111,6 @@ class RDTSender:
         
         # for every character in the buffer
         for data in process_buffer:
-            
             checksum = RDTSender.get_checksum(data)
 
             pkt = RDTSender.make_pkt(self.sequence, data, checksum)
@@ -121,10 +124,36 @@ class RDTSender:
             print(Fore.BLUE + "Sender \033[4mSending packet:\033[0m" + Fore.WHITE + str(pkt))
 
 
+            # Before sending the packet
+            self.stopwatch.start()
+
+
             reply = self.net_srv.udt_send(packet_to_send)
 
-            if reply is None:
-                return
+            while reply is None:
+                current_time = int(self.stopwatch.duration)
+
+                if (current_time >= self.timeout_duration):
+                    packet_to_send = self.clone_packet(pkt)
+
+
+                    print(current_time)
+                    print(Fore.RED + "Timeout occured, Resending")
+
+
+                    print(Fore.BLUE + "Sender \033[4mSending sequence number:\033[0m" + Fore.WHITE + str(self.sequence))
+                    print(Fore.BLUE + "Sender \033[4mSending packet:\033[0m" + Fore.WHITE + str(packet_to_send))
+
+                    
+
+
+                    self.stopwatch.reset()
+                    self.stopwatch.start()
+                    reply = self.net_srv.udt_send(packet_to_send)
+
+            self.stopwatch.stop()
+            self.stopwatch.reset()
+                
 
 
             while self.is_corrupted(reply) or not self.is_expected_seq(reply, self.sequence):
@@ -133,10 +162,36 @@ class RDTSender:
                 packet_to_send = self.clone_packet(pkt)
                 print(Fore.BLUE + "Sender \033[4mSending sequence number:\033[0m" + Fore.WHITE + str(self.sequence))
                 print(Fore.BLUE + "Sender \033[4mSending packet:\033[0m" + Fore.WHITE + str(pkt))
+
+                self.stopwatch.reset()
+                self.stopwatch.start()
+
                 reply = self.net_srv.udt_send(packet_to_send)
                 
-                if reply is None:
-                    return
+                while reply is None:
+                    current_time = int(self.stopwatch.duration)
+
+                    if (current_time >= self.timeout_duration):
+                        packet_to_send = self.clone_packet(pkt)
+
+
+                        print(current_time)
+                        print(Fore.RED + "Timeout occured, Resending")
+
+
+                        print(Fore.BLUE + "Sender \033[4mSending sequence number:\033[0m" + Fore.WHITE + str(self.sequence))
+                        print(Fore.BLUE + "Sender \033[4mSending packet:\033[0m" + Fore.WHITE + str(packet_to_send))
+
+                        
+
+
+                        self.stopwatch.reset()
+                        self.stopwatch.start()
+                        reply = self.net_srv.udt_send(packet_to_send)
+                
+                self.stopwatch.stop()
+                self.stopwatch.reset()
+
 
                 
             print(Fore.BLUE + "Sender \033[4mreceived:\033[0m" + Fore.WHITE + str(reply))
@@ -153,3 +208,4 @@ class RDTSender:
 
 
         return
+

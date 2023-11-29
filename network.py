@@ -83,35 +83,21 @@ class NetworkLayer:
 
         r_test = self.__packet_corruption_probability()
 
-
         y_test = self.__packet_corruption_probability()
 
         z_test = self.__packet_corruption_probability()
 
-        # bridge|connect the RDT sender and receiver
-        # dont send the packet if pkt_loss is on and based on the reliability 
+        # dont send the packet when y_test and pkt_loss enabled 
+        if not (y_test and self.pkt_loss):
+            # self.reply = self.recv.rdt_rcv(None)
+            # do nothing
+            self.reply = self.recv.rdt_rcv(self.packet)
 
+            if r_test and self.ack_corrupt:
+                self.__corrupt_reply()
 
-
-        # if not (y_test and self.pkt_loss):
-        #     self.reply = self.recv.rdt_rcv(self.packet)
-        #     if r_test and self.ack_corrupt:
-        #         self.__corrupt_reply()
-        # else:
-        #     self.reply = None
-
-
-
-        if y_test and self.pkt_loss:
-            self.reply = self.recv.rdt_rcv(None)
-
-        self.reply = self.recv.rdt_rcv(self.packet)
-        
-        if r_test and self.ack_corrupt:
-            self.__corrupt_reply()
-
-        if z_test and self.pkt_loss:
-            self.reply = None
+            if z_test and self.pkt_loss:
+                self.reply = None
 
 
 
