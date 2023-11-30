@@ -110,9 +110,6 @@ class RDTSender:
         # for every character in the buffer
         for data in process_buffer:
 
-            if data is None:
-                return
-
             checksum = RDTSender.get_checksum(data)
 
             pkt = RDTSender.make_pkt(self.sequence, data, checksum)
