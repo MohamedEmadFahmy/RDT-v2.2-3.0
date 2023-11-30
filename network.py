@@ -1,6 +1,7 @@
 import random
 import time
 from receiver import RDTReceiver
+from colorama import Fore
 
 """
 NOTE: YOU SHOULD NOT MODIFY THIS CLASS
@@ -98,7 +99,15 @@ class NetworkLayer:
 
             if z_test and self.pkt_loss:
                 self.reply = None
+                print()
+                print(Fore.MAGENTA + "lost receiver packet")
+                print()
 
+        
+        else:
+            print()
+            print(Fore.MAGENTA + "lost sender packet")
+            print()
 
 
         return self.reply

@@ -103,10 +103,6 @@ class RDTSender:
         """
 
         colorama.init(autoreset = True)
-        print(Fore.CYAN + "Welcome")
-        print(Fore.CYAN + "-------")
-        print(Fore.YELLOW + "Sender is trying to send: " + Fore.WHITE + str(process_buffer))
-        print()
         # print(Fore.RED + "red text")
         
         # for every character in the buffer
@@ -137,8 +133,10 @@ class RDTSender:
                     packet_to_send = self.clone_packet(pkt)
 
 
-                    print(current_time)
+                    # print(current_time)
+                    print()
                     print(Fore.RED + "Timeout occured, Resending")
+                    print()
 
 
                     print(Fore.BLUE + "Sender \033[4mSending sequence number:\033[0m" + Fore.WHITE + str(self.sequence))
@@ -157,7 +155,7 @@ class RDTSender:
 
 
             while self.is_corrupted(reply) or not self.is_expected_seq(reply, self.sequence):
-                print(Fore.RED + "network_layer: \033[4mcorruption occured\033[0m" + str(reply))
+                print(Fore.RED + "network_layer: \033[4mcorruption occured on receiver packet\033[0m  " + Fore.RED + str(reply))
 
                 packet_to_send = self.clone_packet(pkt)
                 print(Fore.BLUE + "Sender \033[4mSending sequence number:\033[0m" + Fore.WHITE + str(self.sequence))

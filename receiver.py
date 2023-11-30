@@ -77,7 +77,7 @@ class RDTReceiver:
         # print()
 
         if self.is_corrupted(rcv_pkt) or not self.is_expected_seq(rcv_pkt, self.sequence):
-            print(Fore.RED + "network_layer: \033[4mcorruption occured\033[0m" + str(rcv_pkt))
+            print(Fore.RED + "network_layer: \033[4mcorruption occured on sender packet \033[0m  " + Fore.RED + str(rcv_pkt))
             print(Fore.GREEN + "Receiver \033[4mExpecting Sequence number:\033[0m" + Fore.WHITE + str(self.sequence))
 
             if seq_to_send == "0":

@@ -17,18 +17,22 @@ if __name__ == "__main__":
     # if debug:
     #     corrupt_pkt = bool(int(args["pkt"]))
     #     corrupt_ack = bool(int(args["ack"]))
-    #     corrupt_ack = bool(int(args["loss"]))
+    #     pkt_loss = bool(int(args["loss"]))
 
     msg = "mos"
     prob_to_deliver = 0.5
-    delay = 0.1
+    delay = 1
     corrupt_pkt = False
     corrupt_ack = False
     pkt_loss = True
 
     SenderProcess.set_outgoing_data(msg)
 
-    # print(f"Sender is sending: {SenderProcess.get_outgoing_data()}")
+    print(Fore.CYAN + "Welcome")
+    print(Fore.CYAN + "-------")
+
+    print(Fore.YELLOW + "Sender is sending: " + Fore.WHITE + SenderProcess.get_outgoing_data())
+    print()
 
     network_serv = NetworkLayer(
         reliability=prob_to_deliver,
