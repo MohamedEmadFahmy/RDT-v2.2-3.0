@@ -1,15 +1,5 @@
-python -u "d:\Semester 5\Networks\Project\Code\main.py" msg="Hello, World!" rel=0.9 delay=1 debug=1 pkt=1 ack=1
-
-
 rdt 3.0:
 
-python -u "d:\Semester 5\Networks\Project\Code\main.py" msg="Hello, World!" rel=0.9 delay=1 debug=1 pkt=1 ack=1 loss = 1
+python -u "d:\Semester 5\Networks\Project\Code\main.py" msg="Hello, World!" rel=0.9 delay=1 debug=1 pkt=1 ack=1 loss=1
 
-
-Sender:
-Loop on message to send character by character
-calculate checksum based on ascii value of character
-sequence number starts with 0
-make a packet using character value, checksum, sequence number
-before sending, make a copy of the packet to send
 

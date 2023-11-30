@@ -1,7 +1,9 @@
 import colorama
 from colorama import Fore
-from stopwatch import Stopwatch
-import math
+# from stopwatch import Stopwatch
+import threading
+
+
 class SenderProcess:
     """Represent the sender process in the application layer"""
 
@@ -35,7 +37,7 @@ class RDTSender:
         self.sequence = "0"
         self.net_srv = net_srv
         self.timeout_duration = 1
-        self.stopwatch = Stopwatch(2)
+        self.TimerExceeded = False
 
     @staticmethod
     def get_checksum(data):
@@ -107,6 +109,10 @@ class RDTSender:
         
         # for every character in the buffer
         for data in process_buffer:
+
+            if data is None:
+                return
+
             checksum = RDTSender.get_checksum(data)
 
             pkt = RDTSender.make_pkt(self.sequence, data, checksum)
@@ -121,19 +127,18 @@ class RDTSender:
 
 
             # Before sending the packet
-            self.stopwatch.start()
+            timer = self.start_timer(self.timeout_duration, self.on_timeout)
+
+            # timer.start()
 
 
             reply = self.net_srv.udt_send(packet_to_send)
 
-            while reply is None:
-                current_time = int(self.stopwatch.duration)
+            while not reply:
 
-                if (current_time >= self.timeout_duration):
+                if self.TimerExceeded:
                     packet_to_send = self.clone_packet(pkt)
 
-
-                    # print(current_time)
                     print()
                     print(Fore.RED + "Timeout occured, Resending")
                     print()
@@ -145,12 +150,11 @@ class RDTSender:
                     
 
 
-                    self.stopwatch.reset()
-                    self.stopwatch.start()
+                    timer = self.start_timer(self.timeout_duration, self.on_timeout)
+
                     reply = self.net_srv.udt_send(packet_to_send)
 
-            self.stopwatch.stop()
-            self.stopwatch.reset()
+            timer.cancel()
                 
 
 
@@ -161,20 +165,18 @@ class RDTSender:
                 print(Fore.BLUE + "Sender \033[4mSending sequence number:\033[0m" + Fore.WHITE + str(self.sequence))
                 print(Fore.BLUE + "Sender \033[4mSending packet:\033[0m" + Fore.WHITE + str(pkt))
 
-                self.stopwatch.reset()
-                self.stopwatch.start()
+                timer = self.start_timer(self.timeout_duration, self.on_timeout)
 
                 reply = self.net_srv.udt_send(packet_to_send)
                 
-                while reply is None:
-                    current_time = int(self.stopwatch.duration)
+                while not reply:
 
-                    if (current_time >= self.timeout_duration):
+                    if self.TimerExceeded:
                         packet_to_send = self.clone_packet(pkt)
 
-
-                        print(current_time)
+                        print()
                         print(Fore.RED + "Timeout occured, Resending")
+                        print()
 
 
                         print(Fore.BLUE + "Sender \033[4mSending sequence number:\033[0m" + Fore.WHITE + str(self.sequence))
@@ -183,12 +185,11 @@ class RDTSender:
                         
 
 
-                        self.stopwatch.reset()
-                        self.stopwatch.start()
+                        timer = self.start_timer(self.timeout_duration, self.on_timeout)
+
                         reply = self.net_srv.udt_send(packet_to_send)
-                
-                self.stopwatch.stop()
-                self.stopwatch.reset()
+
+                timer.cancel()
 
 
                 
@@ -206,4 +207,15 @@ class RDTSender:
 
 
         return
+
+
+    def on_timeout(self):
+        self.TimerExceeded = True
+
+
+    def start_timer(self, duration, callback):
+        self.TimerExceeded = False
+        timer_thread = threading.Timer(duration, callback)
+        timer_thread.start()
+        return timer_thread
 

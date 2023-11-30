@@ -108,6 +108,7 @@ class NetworkLayer:
             print()
             print(Fore.MAGENTA + "lost sender packet")
             print()
+            self.reply = self.recv.rdt_rcv(None)
 
 
         return self.reply
